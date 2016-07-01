@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+         http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<context:component-scan base-package="com.sgck.common.cache" />
+
+
+	<!-- 任务服务类 -->
+	<bean id="sgTaskService" class="com.sgck.core.task.SGTaskService"
+		scope="singleton">
+		<property name="cacheTimeInSec" value="600"></property>
+	</bean>
+
+	<!-- 默认的本地服务器信息提供类，其会自动生成本机服务器的唯一编码 -->
+	<bean id="localServerInfoProvider" class="com.sgck.sync.support.DefaultLocalServerInfoProvider" />
+
+	<!-- 上下级服务器同步组件的配置信息 -->
+	<bean id="syncServiceConfig" class="com.sgck.sync.config.DefaultSyncServiceConfig">
+		<!-- 同步服务的工作目录，用于存放同步服务需要的配置，需要缓存的数据等.，默认为 /admin/sync -->
+		<property name="syncWorkDir" value="/admin/sync"></property>
+		<!-- 上下级服务器的心跳包间隔，以秒为单位. 默认为3秒 -->
+		<property name="syncHeartBeatInterval" value="3"></property>
+	</bean>
+
+	<!-- 下级服务器代理，如果没有下级服务器，不需要配置 -->
+	<bean id="lowerServerStub" class="com.sgck.sync.stub.DefaultLowerServerStub"
+		init-method="init" scope="singleton">
+	</bean>
+
+	<!-- 上级服务器代理，如果没有上级服务器，不需要配置 -->
+	<bean id="upperServerStub" class="com.sgck.sync.stub.DefaultUpperServerStub"
+		init-method="init" scope="singleton">
+	</bean>
+</beans>
